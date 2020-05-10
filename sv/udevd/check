@@ -1,0 +1,5 @@
+#!/bin/sh
+
+. /etc/runit/functions.bash
+
+check_up_and_exit udevd

@@ -1,0 +1,10 @@
+#!/bin/sh
+
+. /etc/runit/functions.bash
+
+IFNAME="$(param $0)"
+
+needs udevd
+wants_down "wpa_supplicant-$IFNAME"
+
+exec hostapd -i "$IFNAME" /etc/hostapd/hostapd.conf

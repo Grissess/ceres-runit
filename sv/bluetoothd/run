@@ -1,0 +1,5 @@
+#!/bin/sh
+
+needs dbus-system
+
+exec /usr/host/libexec/bluetooth/bluetoothd -C -n -E

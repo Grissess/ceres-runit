@@ -1,0 +1,23 @@
+#!/bin/sh
+
+export PATH=/usr/local/bin:/usr/local/sbin:/bin:/sbin:/usr/bin:/usr/sbin
+
+. /etc/runit/functions.bash
+
+phase "STARTING SERVICES"
+
+RUNDIR="$(grep -o 'svdir=[^[:space:]]\+' /proc/cmdline)"
+if [ -n "$RUNDIR" ] ; then
+	RUNDIR="${RUNDIR#*=}"
+	echo -e "\x1b[1;31mSetting rundir to $RUNDIR per cmdline\x1b[m"
+else
+	RUNDIR="sv"
+fi
+
+if ! [[ "$RUNDIR" =~ /.* ]] ; then
+	RUNDIR="/etc/runit/$RUNDIR"
+fi
+
+runsvdir -P "$RUNDIR" 'log: .........................................................................................................................................................................................' > /dev/tty12
+
+phase "SERVICES STOPPED"

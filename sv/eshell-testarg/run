@@ -1,0 +1,25 @@
+#!/bin/sh
+
+. /etc/runit/functions.bash
+
+echo -e "\x1b[1;35mStarting emergency shell (service $0)\nIf you don't need this service, please touch $(dirname $0)/down\x1b[0m"
+
+echo -e "\x1b[1;31mRedirecting stderr..."
+
+exec 2>&1 < /dev/console
+
+echo -e "\x1b[1mStatus info:"
+echo "PWD: $PWD"
+echo "pwd: $(pwd)"
+echo "Param: $(param $0)"
+echo "Which PS: $(which ps)"
+echo "PS:"
+
+ps -e | grep sv
+
+echo "Doing a logger call..."
+logger "test log call"
+
+echo -e "\x1b[0mExecing bash..."
+
+exec chpst -P bash -il

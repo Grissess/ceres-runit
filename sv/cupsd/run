@@ -1,0 +1,5 @@
+#!/bin/sh
+
+. /etc/runit/functions.bash
+
+exec /usr/host/bin/cupsd -f

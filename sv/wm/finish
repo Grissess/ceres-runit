@@ -1,0 +1,6 @@
+#!/bin/bash
+
+killall sway || true
+killall X || true
+
+. ../.log/finish

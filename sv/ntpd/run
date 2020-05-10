@@ -1,0 +1,3 @@
+#!/bin/sh
+
+exec /usr/host/bin/ntpd -n -S "hwclock -w" 2>&1

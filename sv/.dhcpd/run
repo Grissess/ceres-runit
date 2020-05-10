@@ -1,0 +1,10 @@
+#!/bin/sh
+
+. /etc/runit/functions.bash
+
+IFNAME="$(param $0)"
+
+needs udevd
+wants_down "dhcpcd-$IFNAME"
+
+exec dhcpd -f "$IFNAME"

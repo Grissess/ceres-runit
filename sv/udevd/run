@@ -1,0 +1,17 @@
+#!/bin/sh
+
+. /etc/runit/functions.bash
+
+UDEV_CONTROL_PATH=/run/udev/control
+
+(
+	log_msg "Waiting for udev control socket ($UDEV_CONTROL_PATH)..."
+	while [ \! -S $UDEV_CONTROL_PATH ]; do
+		sleep 0.2
+	done
+
+	udevadm trigger --type=subsystems --action=add
+	udevadm trigger --type=devices --action=add
+	udevadm settle
+	indicate_up udevd
+) & exec /usr/host/bin/udevd 2>&1

@@ -1,0 +1,7 @@
+#!/bin/sh
+
+. /etc/runit/functions.bash
+
+while read LINE; do
+	logger -t "$(daemon_name)" "$LINE"
+done

@@ -1,0 +1,13 @@
+#!/bin/bash
+
+. /etc/runit/functions.bash
+
+sleep 10
+
+if [ $(ls /sys/bus/serio/devices/ | wc -l) -eq 2 ]; then
+	echo "\x1b[1;31mFailed to detect mouse, rebooting.\x1b[0m"
+	init 6
+else
+	echo "\x1b[1;32mMouse seems detected, moving on.\x1b[0m"
+	sv d check_mouse
+fi

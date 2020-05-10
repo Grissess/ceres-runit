@@ -1,0 +1,23 @@
+#!/bin/bash
+
+. /etc/runit/functions.bash
+
+TTYN=7
+TTY=/dev/tty$TTYN
+DISPLAYSERVER=sway
+
+for word in $(cat /proc/cmdline); do
+	case $word in
+		displayserver=*)
+			DISPLAYSERVER=${word#displayserver=}
+			;;
+	esac
+done
+
+needs udevd
+
+mkdir /run/grissess
+chown grissess:grissess /run/grissess
+
+chvt $TTYN
+exec su - grissess -c "XDG_RUNTIME_DIR=/run/grissess setsid -cw $DISPLAYSERVER" < $TTY > $TTY 2> $TTY

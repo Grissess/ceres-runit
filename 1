@@ -1,0 +1,68 @@
+#!/bin/sh
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
+
+. /etc/runit/functions.bash
+
+begin_crit
+
+hdr 'Mounting critical filesystems...'
+mount -t proc none /proc
+mount -t sysfs none /sys
+mount -t ramfs none /tmp
+chmod +t /tmp
+chmod a+w /tmp
+mount -t ramfs none /run
+chmod +t /run
+chmod a+w /run
+mkdir /run/lock
+chmod +t /run/lock
+chmod a+w /run/lock
+
+mkdir /dev/pts
+mount -t devpts none /dev/pts
+mkdir /dev/shm
+# Taken care of in /etc/fstab
+
+# Fix emergency shell cave installs
+chgrp tty /dev/tty
+
+hdr_ok 'Initializing SELinux...'
+mount -t selinuxfs none /sys/fs/selinux/
+cat /etc/selinux/current > /sys/fs/selinux/load
+
+hdr_ok "Setting up hardware workarounds..."
+echo none > /sys/class/leds/platform::mute/trigger
+
+hdr_ok "Fixing SELinux initial roles..."
+while read a b c d mp e f tp rest; do
+	chcon -r obj "$mp"
+done < /proc/self/mountinfo
+
+hdr_ok 'Mounting /etc/fstab...'
+mount -a
+
+hdr_ok 'Remounting root rw...'
+mount -o remount,rw /
+
+hdr_ok 'Setting hostname...'
+[ -r /etc/hostname ] && hostname $(cat /etc/hostname)
+
+hdr_ok 'Initializing all VTs...'
+for vtnum in $(seq 2 12); do chvt $vtnum; done
+chvt 1
+
+hdr_ok 'Bringing up core networking...'
+ip l set dev lo up
+
+hdr_ok 'Finalizing stage 1...'
+
+touch /etc/runit/stopit
+chmod 0 /etc/runit/stopit
+
+hdr_ok 'Reenabling the emerg_shell...'
+
+rm /etc/runit/no_emerg_shell || echo -n " (wasn't there)"
+
+ok
+end_crit

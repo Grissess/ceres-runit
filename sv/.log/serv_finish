@@ -1,0 +1,25 @@
+#!/bin/sh
+
+. /etc/runit/functions.bash
+
+EXIT_CODE="$1"
+SIGNAL="$2"
+
+emit_msg() {
+	log_msg "\x1b[35;1m[exit]\x1b[m" "$@"
+	logger -t "$(daemon_name)" "EXIT:" "$@"
+}
+
+if [ $EXIT_CODE -ne -1 ] ; then
+	if [ $EXIT_CODE -eq 111 ] ; then
+		emit_msg "\x1b[31mCould not execute run\x1b[m (or exit code was 111)"
+	else
+		emit_msg "Exited with code $EXIT_CODE"
+	fi
+else
+	if [ $SIGNAL -ne 0 ] ; then
+		emit_msg "\x1b[31mTerminated with signal $SIGNAL (SIG$(kill -l $SIGNAL))\x1b[m"
+	else
+		emit_msg "Unknown termination reason: exit code $EXIT_CODE, signal $SIGNAL"
+	fi
+fi

@@ -1,0 +1,16 @@
+#!/bin/sh
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
+
+if ps -e | grep runsvdir; then
+	echo 'Stopping services...'
+	sv -w30 force-stop /etc/runit/sv/*
+	echo 'Killing remaining services...'
+	sv exit /etc/runit/sv/*
+else
+	echo 'No supervisory service, skipping force-down'
+fi
+echo 'Syncing filesystems...'
+sync
+
+echo -e "\x1b[1;32;44mGood night.\x1b[m"

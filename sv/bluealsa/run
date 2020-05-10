@@ -1,0 +1,8 @@
+#!/bin/sh
+
+. /etc/runit/functions.bash
+
+needs bluetoothd
+needs dbus-system
+
+exec /usr/host/bin/bluealsa 2>&1

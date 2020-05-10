@@ -1,0 +1,7 @@
+#!/bin/sh
+
+. /etc/runit/functions.bash
+
+TTYNAME=$(param $0)
+
+exec chpst -P agetty -8 $TTYNAME

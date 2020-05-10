@@ -1,0 +1,36 @@
+#!/bin/sh
+
+[ -r /etc/runit/no_emerg_shell ] && exit 0
+
+. /root/trusted/profile.env  # For config variables
+
+chvt 11
+TTY=/dev/tty11
+exec < $TTY > $TTY 2> $TTY
+echo -ne "\x1b[1;37;41mPANICKING!\n\x1b[1;31m"
+
+echo "Preventing termination vectors..."
+trap 'echo "(Trap prevented)"' SIGINT SIGQUIT SIGABRT SIGPIPE SIGTERM
+
+echo "Destroying .bash_logout..."
+mv "$HOME/.bash_logout" "$HOME/.old_bash_logout" || true
+
+echo "Killing all interfaces"
+pushd /sys/class/net/
+for intf in $(ls); do ip l set "$intf" down; done
+popd
+
+echo "Exiting all services... (may interrupt)"
+killall -HUP runsvdir
+#pushd "$SVDIR"
+#for sv in $(ls); do echo -n "x" > "$sv/supervise/control"; done
+#popd
+
+echo "Entering emerg_shell... (good luck!)"
+
+mount -o remount,ro /
+
+. /etc/runit/functions.bash
+
+chvt 11
+crit "Ctrl+Alt+Del"

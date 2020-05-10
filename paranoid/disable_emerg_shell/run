@@ -1,0 +1,4 @@
+#!/bin/sh
+
+touch /etc/runit/no_emerg_shell
+sleep inf
