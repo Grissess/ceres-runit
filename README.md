@@ -58,6 +58,52 @@ phases as well as all services so far written. (The file could stand to be
 split, but is trivial in size anyway.) It has been carefully documented for
 this release; feel free to peruse it.
 
+Rationale
+---------
+
+*(Or: Why not systemd?)*
+
+The short of it comes down to three reasons:
+
+- I use hardware far more broken than many other people will tolerate. My old
+  Dell Latitude, with the primordial (and now-lost) first runit configuration I
+  wrote, from which this is derived, had a bad battery, which the charge
+  controller would report dropping from 99% capacity to 0.02% in a single
+  poll--yet it would continue running for up to half an hour at 0.02%. The
+  Lenovo Thinkpad I use, to this day, has a hardware bug that causes it to go
+  into a coma when Linux attempts to suspend to memory. In both cases,
+  "reasonable" upstreams generally assume that users want the "bells and
+  whistles" of, say, automatically shutting down at low battery, or sleeping
+  when the lid is closed by default, both of which I've lost quite a bit of
+  work to on these deranged systems. In fact, though I am probably in the
+  minority, I prefer to configure these features myself, if ever I have to
+  depend on them--not to be surprised by such misfeatures being the default.
+
+- I believe one should know their personal service manager well; it constitutes
+  an attack surface, a troubleshooting tool, and something which can (and
+  should) be easy to modify to accomodate the idiosyncracies of a platform. In
+  places like production-grade servers, I admit that I use systemd units and do
+  not mind the platform normalization I can expect there, but it is quite nice
+  to be able to turn my laptop into a router or an access point with only one
+  shell script (which consists mostly of `sv` calls), or to be confident in the
+  list of possibly-running services with a simple `ls`. I don't expect this
+  variable and admittedly-fragile level of configurability on those production
+  servers, but I can and do use it personally.
+
+- I want these scripts to be educational. An enormous amount of complexity in
+  the boot system of moddern systemd services is hidden from the casual and
+  curious Linux user, and it can be hard to figure out what _minimal_
+  configuration or algorithm is needed to boot up a reasonable userspace (at
+  least, compatible with the software they want to use). It took me a long time
+  to understand this machinery and distill it into these scripts (and I don't
+  claim this is "minimal"), but it serves as a distinct reminder that init need
+  not be hard for the sufficiently-motivated student who is willing to learn
+  basic shell sysadmin.
+
+In the end, of course, my reasons are my own; I am not here to "proselytize
+runit to the wayward systemd heathens" or any such dogma, but I welcome you to
+try it if you'd like, and if you don't like it, that's fine too.
+
 License
 -------
 
